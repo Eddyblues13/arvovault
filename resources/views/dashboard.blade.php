@@ -1,5 +1,4 @@
 @use('Illuminate\Support\Number')
-@use('App\TransactionStatus')
 
 <x-layouts.app title="Dashboard">
     <div>
@@ -62,8 +61,9 @@
 
     {{-- Recent activity --}}
     <section class="mt-8 rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-slate-900" aria-labelledby="recent-activity-heading">
-        <div class="border-b border-slate-100 px-5 py-4 sm:px-6 dark:border-white/5">
+        <div class="flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-4 sm:px-6 dark:border-white/5">
             <h2 id="recent-activity-heading" class="text-lg font-semibold text-slate-900 dark:text-white">Recent Activity</h2>
+            <a href="{{ route('wallet') }}" class="text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">View all</a>
         </div>
 
         @if ($recentTransactions->isEmpty())
@@ -77,32 +77,7 @@
         @else
             <ul class="divide-y divide-slate-100 dark:divide-white/5">
                 @foreach ($recentTransactions as $transaction)
-                    <li class="flex items-center gap-3 px-5 py-4 sm:gap-4 sm:px-6">
-                        <span @class([
-                            'flex size-10 shrink-0 items-center justify-center rounded-full',
-                            'bg-emerald-50 text-emerald-600 dark:bg-emerald-400/10 dark:text-emerald-400' => $transaction->isCredit(),
-                            'bg-blue-50 text-blue-600 dark:bg-blue-400/10 dark:text-blue-400' => ! $transaction->isCredit(),
-                        ])>
-                            <x-icon :name="$transaction->isCredit() ? 'arrow-down-left' : 'arrow-up-right'" class="size-4" />
-                        </span>
-                        <div class="min-w-0 flex-1">
-                            <p class="truncate text-sm font-medium text-slate-900 dark:text-white">{{ $transaction->title() }}</p>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">{{ $transaction->created_at->format('M j, Y · g:i A') }}</p>
-                        </div>
-                        <div class="flex flex-col items-end gap-1">
-                            <span @class([
-                                'text-sm font-semibold tabular-nums',
-                                'text-emerald-600 dark:text-emerald-400' => $transaction->isCredit(),
-                                'text-slate-900 dark:text-white' => ! $transaction->isCredit(),
-                            ])>{{ $transaction->isCredit() ? '+' : '−' }}{{ Number::currency($transaction->amount_in_cents / 100) }}</span>
-                            <span @class([
-                                'rounded-full px-2 py-0.5 text-[11px] font-medium ring-1 ring-inset',
-                                'bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-400/10 dark:text-emerald-300 dark:ring-emerald-400/20' => $transaction->status === TransactionStatus::Completed,
-                                'bg-amber-50 text-amber-700 ring-amber-600/20 dark:bg-amber-400/10 dark:text-amber-300 dark:ring-amber-400/20' => $transaction->status === TransactionStatus::Pending,
-                                'bg-red-50 text-red-700 ring-red-600/20 dark:bg-red-400/10 dark:text-red-300 dark:ring-red-400/20' => $transaction->status === TransactionStatus::Failed,
-                            ])>{{ $transaction->status->label() }}</span>
-                        </div>
-                    </li>
+                    <x-transaction-item :transaction="$transaction" />
                 @endforeach
             </ul>
         @endif

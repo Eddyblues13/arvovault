@@ -2,7 +2,14 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MarkNotificationsAsReadController;
+use App\Http\Controllers\PlanController;
+use App\Http\Controllers\SupportMessageController;
+use App\Http\Controllers\TipController;
+use App\Http\Controllers\WalletController;
+use App\Http\Controllers\WithdrawalController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
@@ -18,30 +25,23 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
 
-    Route::view('wallet', 'coming-soon', [
-        'page' => 'Wallet',
-        'description' => 'Your full balance breakdown and transaction history.',
-    ])->name('wallet');
+    Route::get('wallet', WalletController::class)->name('wallet');
 
-    Route::view('withdraw', 'coming-soon', [
-        'page' => 'Withdraw',
-        'description' => 'Request payouts to Cash App, Zelle, PayPal, crypto and more.',
-    ])->name('withdraw');
+    Route::get('withdraw', [WithdrawalController::class, 'create'])->name('withdraw');
+    Route::post('withdraw', [WithdrawalController::class, 'store'])->middleware('throttle:10,1')->name('withdraw.store');
 
-    Route::view('plans', 'coming-soon', [
-        'page' => 'Plans',
-        'description' => 'Browse and manage the plans available to your account.',
-    ])->name('plans');
+    Route::get('plans', PlanController::class)->name('plans');
 
-    Route::view('tips', 'coming-soon', [
-        'page' => 'Tips',
-        'description' => 'Helpful guides for getting the most out of your wallet.',
-    ])->name('tips');
+    Route::get('tips', [TipController::class, 'index'])->name('tips');
+    Route::get('tips/{tip}', [TipController::class, 'show'])->name('tips.show');
 
-    Route::view('bookings', 'coming-soon', [
-        'page' => 'Bookings',
-        'description' => 'Schedule and keep track of your upcoming bookings.',
-    ])->name('bookings');
+    Route::get('bookings', [BookingController::class, 'index'])->name('bookings');
+    Route::post('bookings', [BookingController::class, 'store'])->middleware('throttle:10,1')->name('bookings.store');
+
+    Route::get('support/messages', [SupportMessageController::class, 'index'])->name('support.messages.index');
+    Route::post('support/messages', [SupportMessageController::class, 'store'])->middleware('throttle:30,1')->name('support.messages.store');
+
+    Route::post('notifications/mark-all-read', MarkNotificationsAsReadController::class)->name('notifications.mark-all-read');
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });

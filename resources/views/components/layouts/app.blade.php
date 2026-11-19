@@ -40,16 +40,48 @@
 
                 <div class="flex items-center gap-1">
                     <details class="group relative">
-                        <summary class="flex cursor-pointer list-none rounded-lg p-2.5 text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-blue-600 group-open:bg-slate-100 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-white dark:group-open:bg-white/10 [&::-webkit-details-marker]:hidden">
+                        <summary class="relative flex cursor-pointer list-none rounded-lg p-2.5 text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-blue-600 group-open:bg-slate-100 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-white dark:group-open:bg-white/10 [&::-webkit-details-marker]:hidden">
                             <span class="sr-only">Notifications</span>
                             <x-icon name="bell" />
+                            @if ($unreadNotificationsCount > 0)
+                                <span class="absolute top-1 right-1 flex min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] leading-4 font-semibold text-white tabular-nums ring-2 ring-white dark:ring-slate-950">{{ $unreadNotificationsCount > 9 ? '9+' : $unreadNotificationsCount }}<span class="sr-only"> unread</span></span>
+                            @endif
                         </summary>
-                        <div class="absolute right-0 mt-2 w-[min(18rem,calc(100vw-2rem))] rounded-2xl border border-slate-200 bg-white p-4 shadow-xl shadow-slate-900/10 dark:border-white/10 dark:bg-slate-900">
-                            <p class="text-sm font-semibold text-slate-900 dark:text-white">Notifications</p>
-                            <div class="mt-3 flex flex-col items-center rounded-xl bg-slate-50 px-4 py-6 text-center dark:bg-white/5">
-                                <x-icon name="bell" class="size-6 text-slate-400" />
-                                <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">You're all caught up.</p>
+                        <div class="absolute right-0 mt-2 w-[min(20rem,calc(100vw-2rem))] rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-900/10 dark:border-white/10 dark:bg-slate-900">
+                            <div class="flex items-center justify-between gap-3 px-2 py-2">
+                                <p class="text-sm font-semibold text-slate-900 dark:text-white">Notifications</p>
+                                @if ($unreadNotificationsCount > 0)
+                                    <form method="POST" action="{{ route('notifications.mark-all-read') }}">
+                                        @csrf
+                                        <button type="submit" class="rounded text-xs font-semibold text-blue-600 hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:text-blue-300">Mark all as read</button>
+                                    </form>
+                                @endif
                             </div>
+
+                            @if ($recentNotifications->isEmpty())
+                                <div class="flex flex-col items-center rounded-xl bg-slate-50 px-4 py-6 text-center dark:bg-white/5">
+                                    <x-icon name="bell" class="size-6 text-slate-400" />
+                                    <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">You're all caught up.</p>
+                                </div>
+                            @else
+                                <ul class="max-h-80 space-y-1 overflow-y-auto">
+                                    @foreach ($recentNotifications as $notification)
+                                        <li>
+                                            <a href="{{ $notification->data['url'] ?? route('dashboard') }}" class="flex gap-3 rounded-xl px-3 py-2.5 transition hover:bg-slate-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/5">
+                                                <span @class([
+                                                    'mt-1.5 size-2 shrink-0 rounded-full',
+                                                    'bg-blue-600 dark:bg-blue-400' => $notification->unread(),
+                                                    'bg-slate-200 dark:bg-white/10' => $notification->read(),
+                                                ])></span>
+                                                <span class="min-w-0">
+                                                    <span class="block text-sm text-slate-700 dark:text-slate-200">{{ $notification->data['message'] ?? '' }}</span>
+                                                    <span class="mt-0.5 block text-xs text-slate-500 dark:text-slate-400">{{ $notification->created_at->diffForHumans() }}</span>
+                                                </span>
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @endif
                         </div>
                     </details>
 
@@ -112,6 +144,8 @@
 
         <div class="lg:pl-64">
             <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-10 lg:py-10">
+                <x-flash-messages />
+
                 {{ $slot }}
             </main>
         </div>

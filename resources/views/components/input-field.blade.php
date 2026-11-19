@@ -1,4 +1,4 @@
-@props(['label', 'name', 'type' => 'text', 'hint' => null])
+@props(['label', 'name', 'type' => 'text', 'hint' => null, 'value' => null])
 
 @php
     $hasError = $errors->has($name);
@@ -17,7 +17,7 @@
             id="{{ $name }}"
             name="{{ $name }}"
             type="{{ $type }}"
-            @unless ($isPassword) value="{{ old($name) }}" @endunless
+            @unless ($isPassword) value="{{ old($name, $value) }}" @endunless
             @if ($hasError) aria-invalid="true" @endif
             @if ($describedBy) aria-describedby="{{ $describedBy }}" @endif
             {{ $attributes->class([

@@ -90,4 +90,15 @@ class DashboardControllerTest extends TestCase
         $response->assertSee('Withdrawal to Zelle');
         $response->assertSee('−$25.00');
     }
+
+    public function test_transaction_descriptions_written_by_admins_are_escaped(): void
+    {
+        $user = User::factory()->create();
+        Transaction::factory()->for($user)->create(['description' => "<script>alert('xss')</script>"]);
+
+        $response = $this->actingAs($user)->get(route('dashboard'));
+
+        $response->assertSee('&lt;script&gt;alert(', false);
+        $response->assertDontSee("<script>alert('xss')</script>", false);
+    }
 }

@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['type', 'status', 'amount_in_cents', 'method', 'description'])]
+#[Fillable(['type', 'status', 'amount_in_cents', 'method', 'destination', 'description'])]
 class Transaction extends Model
 {
     /** @use HasFactory<TransactionFactory> */
@@ -52,6 +52,16 @@ class Transaction extends Model
     }
 
     /**
+     * Get the admin who added the transaction, if an admin added it.
+     *
+     * @return BelongsTo<Admin, $this>
+     */
+    public function admin(): BelongsTo
+    {
+        return $this->belongsTo(Admin::class);
+    }
+
+    /**
      * Scope the query to credits.
      *
      * @param  Builder<Transaction>  $query
@@ -85,11 +95,30 @@ class Transaction extends Model
     }
 
     /**
+     * Scope the query to transactions that are still pending.
+     *
+     * @param  Builder<Transaction>  $query
+     */
+    #[Scope]
+    protected function pending(Builder $query): void
+    {
+        $query->where('status', TransactionStatus::Pending);
+    }
+
+    /**
      * Determine whether the transaction adds money to the wallet.
      */
     public function isCredit(): bool
     {
         return $this->type === TransactionType::Credit;
+    }
+
+    /**
+     * Determine whether the transaction is still waiting to be approved or declined.
+     */
+    public function isPending(): bool
+    {
+        return $this->status === TransactionStatus::Pending;
     }
 
     /**
