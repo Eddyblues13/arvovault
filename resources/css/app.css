@@ -1,0 +1,40 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+@layer base {
+    :root {
+        --hero-grid-line: rgb(15 23 42 / 0.05);
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --hero-grid-line: rgb(255 255 255 / 0.05);
+        }
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html {
+            scroll-behavior: auto;
+        }
+    }
+}
+
+/* Faint grid behind the hero that fades out toward the edges. */
+@utility hero-grid {
+    background-image:
+        linear-gradient(to right, var(--hero-grid-line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--hero-grid-line) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 75% 60% at 50% 0%, #000 35%, transparent 100%);
+}
