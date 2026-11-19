@@ -51,7 +51,12 @@
                             <div class="flex min-w-0 items-center gap-3 md:col-span-6">
                                 <x-admin.user-avatar :user="$user" />
                                 <div class="min-w-0">
-                                    <p class="truncate text-sm font-semibold text-slate-900 dark:text-white">{{ $user->name }}</p>
+                                    <div class="flex min-w-0 items-center gap-2">
+                                        <p class="truncate text-sm font-semibold text-slate-900 dark:text-white">{{ $user->name }}</p>
+                                        @if ($user->isSuspended())
+                                            <span class="shrink-0 rounded-full bg-red-50 px-2 py-0.5 text-[11px] font-medium text-red-700 ring-1 ring-red-600/20 ring-inset dark:bg-red-400/10 dark:text-red-300 dark:ring-red-400/20">Suspended</span>
+                                        @endif
+                                    </div>
                                     <p class="truncate text-xs text-slate-500 dark:text-slate-400">{{ $user->email }}</p>
                                 </div>
                             </div>

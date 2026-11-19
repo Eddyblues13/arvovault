@@ -1,9 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\AccountController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\BookingStatusController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DepositAccountController;
 use App\Http\Controllers\Admin\PlanController;
 use App\Http\Controllers\Admin\SupportConversationController;
 use App\Http\Controllers\Admin\SupportMessageController;
@@ -12,6 +15,7 @@ use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\TransactionStatusController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\UserFundController;
+use App\Http\Controllers\Admin\UserSuspensionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,6 +38,8 @@ Route::middleware('admin')->group(function () {
 
     Route::resource('users', UserController::class)->only(['index', 'show', 'edit', 'update']);
     Route::post('users/{user}/funds', [UserFundController::class, 'store'])->name('users.funds.store');
+    Route::post('users/{user}/suspension', [UserSuspensionController::class, 'store'])->name('users.suspension.store');
+    Route::delete('users/{user}/suspension', [UserSuspensionController::class, 'destroy'])->name('users.suspension.destroy');
 
     Route::get('transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::patch('transactions/{transaction}/status', [TransactionStatusController::class, 'update'])->name('transactions.status.update');
@@ -48,6 +54,14 @@ Route::middleware('admin')->group(function () {
 
     Route::resource('plans', PlanController::class)->except(['show']);
     Route::resource('tips', TipController::class)->except(['show']);
+
+    Route::get('deposit-methods', [DepositAccountController::class, 'edit'])->name('deposit-accounts.edit');
+    Route::put('deposit-methods', [DepositAccountController::class, 'update'])->name('deposit-accounts.update');
+
+    Route::resource('admins', AdminController::class)->only(['index', 'create', 'store', 'destroy']);
+
+    Route::get('account', [AccountController::class, 'edit'])->name('account.edit');
+    Route::put('account', [AccountController::class, 'update'])->name('account.update');
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });

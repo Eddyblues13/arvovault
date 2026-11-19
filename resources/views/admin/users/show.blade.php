@@ -25,8 +25,34 @@
                 <x-icon name="pencil" class="size-4" />
                 Edit details
             </a>
+
+            @if ($user->isSuspended())
+                <form method="POST" action="{{ route('admin.users.suspension.destroy', $user) }}" class="col-span-2 sm:col-auto">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">
+                        <x-icon name="check" class="size-4" />
+                        Reactivate
+                    </button>
+                </form>
+            @else
+                <form method="POST" action="{{ route('admin.users.suspension.store', $user) }}" data-confirm="Suspend {{ $user->name }}? They'll be signed out and can't sign back in until you reactivate the account." class="col-span-2 sm:col-auto">
+                    @csrf
+                    <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-red-600 shadow-sm ring-1 ring-red-200 transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 dark:bg-white/5 dark:text-red-400 dark:ring-red-400/30 dark:hover:bg-red-400/10">
+                        <x-icon name="ban" class="size-4" />
+                        Suspend
+                    </button>
+                </form>
+            @endif
         </div>
     </div>
+
+    @if ($user->isSuspended())
+        <div role="status" class="mt-6 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-200">
+            <x-icon name="ban" class="mt-0.5 size-4" />
+            <p><span class="font-semibold">Suspended since {{ $user->suspended_at->format('M j, Y') }}.</span> {{ $user->name }} can't sign in or use their wallet until you reactivate the account.</p>
+        </div>
+    @endif
 
     {{-- Balances --}}
     <div class="mt-8 grid grid-cols-2 gap-4 md:grid-cols-3 lg:gap-6">

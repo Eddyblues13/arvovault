@@ -49,9 +49,13 @@ class TransactionStatusUpdated extends Notification
         $isApproved = $this->transaction->status === TransactionStatus::Completed;
 
         if ($this->transaction->isCredit()) {
+            $credit = $this->transaction->method
+                ? "Your deposit of {$amount} via {$this->transaction->method}"
+                : "Your credit of {$amount}";
+
             return $isApproved
-                ? "Your credit of {$amount} was approved and added to your balance."
-                : "Your credit of {$amount} was declined.";
+                ? "{$credit} was approved and added to your balance."
+                : "{$credit} was declined.";
         }
 
         $withdrawal = $this->transaction->method

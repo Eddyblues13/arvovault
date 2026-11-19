@@ -17,6 +17,9 @@
             @if ($transaction->destination)
                 · {{ $transaction->destination }}
             @endif
+            @if ($transaction->reference)
+                · Ref {{ $transaction->reference }}
+            @endif
         </p>
     </div>
     <div class="flex flex-col items-end gap-1">

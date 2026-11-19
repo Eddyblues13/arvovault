@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Http\Controllers;
 
+use App\Models\Booking;
+use App\Models\Tip;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -31,6 +33,44 @@ class DashboardControllerTest extends TestCase
         $response->assertViewHas('totalWithdrawnInCents', 0);
         $response->assertSee('$0.00');
         $response->assertSee('No transactions yet');
+    }
+
+    public function test_quick_actions_link_to_add_funds_and_withdraw(): void
+    {
+        $response = $this->actingAs(User::factory()->create())->get(route('dashboard'));
+
+        $response->assertSee(route('deposit'));
+        $response->assertSee(route('withdraw'));
+    }
+
+    public function test_dashboard_shows_the_next_booking_that_is_not_cancelled(): void
+    {
+        $this->travelTo('2026-11-20 12:00:00');
+        $user = User::factory()->create();
+        Booking::factory()->for($user)->cancelled()->create(['topic' => 'Cancelled session', 'scheduled_for' => '2026-11-21 09:00:00']);
+        Booking::factory()->for($user)->confirmed()->create(['topic' => 'Account review', 'scheduled_for' => '2026-11-23 15:00:00']);
+        Booking::factory()->for($user)->create(['topic' => 'Later session', 'scheduled_for' => '2026-11-28 10:00:00']);
+        Booking::factory()->for($user)->create(['topic' => 'Past session', 'scheduled_for' => '2026-11-19 10:00:00']);
+
+        $response = $this->actingAs($user)->get(route('dashboard'));
+
+        $response->assertViewHas('nextBooking', fn (?Booking $booking): bool => $booking?->topic === 'Account review');
+        $response->assertSee('Account review');
+        $response->assertDontSee('Cancelled session');
+    }
+
+    public function test_dashboard_lists_the_three_newest_published_tips(): void
+    {
+        foreach (range(1, 4) as $daysAgo) {
+            Tip::factory()->create(['title' => "Tip {$daysAgo}", 'published_at' => now()->subDays($daysAgo)]);
+        }
+        Tip::factory()->draft()->create(['title' => 'Draft tip']);
+
+        $response = $this->actingAs(User::factory()->create())->get(route('dashboard'));
+
+        $response->assertSeeInOrder(['Tip 1', 'Tip 2', 'Tip 3']);
+        $response->assertDontSee('Tip 4');
+        $response->assertDontSee('Draft tip');
     }
 
     public function test_totals_count_completed_credits_and_reserve_pending_withdrawals(): void

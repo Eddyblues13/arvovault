@@ -27,5 +27,9 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test Admin',
             'email' => 'admin@example.com',
         ]);
+
+        if (app()->isLocal()) {
+            $this->call(DemoSeeder::class);
+        }
     }
 }

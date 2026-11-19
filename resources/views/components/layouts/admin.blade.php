@@ -13,6 +13,11 @@
             ['route' => 'admin.plans.index', 'activePattern' => 'admin.plans.*', 'label' => 'Plans', 'icon' => 'trophy'],
             ['route' => 'admin.tips.index', 'activePattern' => 'admin.tips.*', 'label' => 'Tips', 'icon' => 'lightbulb'],
         ],
+        'Settings' => [
+            ['route' => 'admin.deposit-accounts.edit', 'activePattern' => 'admin.deposit-accounts.*', 'label' => 'Deposit methods', 'icon' => 'banknote'],
+            ['route' => 'admin.admins.index', 'activePattern' => 'admin.admins.*', 'label' => 'Admins', 'icon' => 'shield'],
+            ['route' => 'admin.account.edit', 'activePattern' => 'admin.account.*', 'label' => 'My account', 'icon' => 'user'],
+        ],
     ];
 
     $admin = auth('admin')->user();
@@ -113,13 +118,13 @@
             </nav>
 
             <div class="border-t border-slate-200 p-4 dark:border-white/10">
-                <div class="flex items-center gap-3 rounded-xl bg-slate-50 p-3 dark:bg-white/5">
+                <a href="{{ route('admin.account.edit') }}" class="flex items-center gap-3 rounded-xl bg-slate-50 p-3 transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:hover:bg-white/10">
                     <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-slate-900 text-sm font-semibold text-white dark:bg-white dark:text-slate-900">{{ $admin->initials() }}</span>
                     <div class="min-w-0">
                         <p class="truncate text-sm font-semibold text-slate-900 dark:text-white">{{ $admin->name }}</p>
                         <p class="truncate text-xs text-slate-500 dark:text-slate-400">{{ $admin->email }}</p>
                     </div>
-                </div>
+                </a>
             </div>
         </aside>
 

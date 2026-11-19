@@ -61,7 +61,8 @@ async function refreshChat(chat, { scrollToEnd = false } = {}) {
             headers: { Accept: 'text/html', 'X-Requested-With': 'XMLHttpRequest' },
         });
 
-        if (!response.ok) {
+        // A redirect means the session ended, so the response is the sign-in page, not the chat.
+        if (!response.ok || response.redirected) {
             return;
         }
 
@@ -148,6 +149,21 @@ async function sendChatMessage(form) {
     }
 }
 
+async function copyToClipboard(button) {
+    const label = button.querySelector('[data-copy-label]');
+
+    try {
+        await navigator.clipboard.writeText(button.dataset.copy);
+        label.textContent = 'Copied';
+    } catch {
+        label.textContent = 'Copy failed';
+    }
+
+    window.setTimeout(() => {
+        label.textContent = 'Copy';
+    }, 2000);
+}
+
 function showPayoutInstructions(payoutMethod) {
     const destination = document.getElementById('destination');
     const destinationHint = document.getElementById('destination-hint');
@@ -180,6 +196,14 @@ document.addEventListener('click', (event) => {
 
     if (chatTrigger) {
         openChat(chatTrigger.dataset.chatMessage);
+
+        return;
+    }
+
+    const copyButton = event.target.closest('[data-copy]');
+
+    if (copyButton) {
+        copyToClipboard(copyButton);
     }
 });
 

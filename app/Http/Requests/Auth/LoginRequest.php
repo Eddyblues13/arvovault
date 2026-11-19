@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -55,7 +56,30 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        $this->ensureAccountIsNotSuspended();
+
         RateLimiter::clear($this->throttleKey());
+    }
+
+    /**
+     * Sign the account straight back out when an admin has suspended it.
+     *
+     * @throws ValidationException
+     */
+    private function ensureAccountIsNotSuspended(): void
+    {
+        $guard = Auth::guard($this->guardName());
+        $account = $guard->user();
+
+        if (! $account instanceof User || ! $account->isSuspended()) {
+            return;
+        }
+
+        $guard->logout();
+
+        throw ValidationException::withMessages([
+            'email' => 'Your account has been suspended. Contact support if you think this is a mistake.',
+        ]);
     }
 
     /**

@@ -23,6 +23,8 @@ class TransactionStatusUpdatedTest extends TestCase
         return [
             'approved credit' => ['credit', 'completed', null, 'Your credit of $25.00 was approved and added to your balance.'],
             'declined credit' => ['credit', 'failed', null, 'Your credit of $25.00 was declined.'],
+            'approved deposit' => ['credit', 'completed', 'Cash App', 'Your deposit of $25.00 via Cash App was approved and added to your balance.'],
+            'declined deposit' => ['credit', 'failed', 'Cash App', 'Your deposit of $25.00 via Cash App was declined.'],
             'approved withdrawal' => ['withdrawal', 'completed', 'PayPal', 'Your withdrawal of $25.00 to PayPal was approved.'],
             'declined withdrawal' => ['withdrawal', 'failed', 'PayPal', 'Your withdrawal of $25.00 to PayPal was declined, and the funds are back in your balance.'],
             'approved withdrawal without a method' => ['withdrawal', 'completed', null, 'Your withdrawal of $25.00 was approved.'],

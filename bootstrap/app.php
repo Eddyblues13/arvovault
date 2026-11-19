@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AuthenticateAdmin;
+use App\Http\Middleware\EnsureUserIsNotSuspended;
 use App\Http\Middleware\RedirectIfAdminAuthenticated;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -24,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => AuthenticateAdmin::class,
             'admin.guest' => RedirectIfAdminAuthenticated::class,
+            'not-suspended' => EnsureUserIsNotSuspended::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

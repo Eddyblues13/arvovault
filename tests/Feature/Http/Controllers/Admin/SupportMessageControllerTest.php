@@ -72,7 +72,7 @@ class SupportMessageControllerTest extends TestCase
         $admin = Admin::factory()->create();
         $this->actingAs($admin, 'admin')->post(route('admin.support.messages.store', $user), ['body' => 'Your payout was sent.']);
 
-        $response = $this->actingAs($user)->get(route('support.messages.index'));
+        $response = $this->actingAs($user, 'web')->get(route('support.messages.index'));
 
         $response->assertSeeInOrder(['Your payout was sent.', 'Support']);
         $this->assertNotNull(SupportMessage::sole()->read_at);

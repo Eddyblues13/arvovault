@@ -4,10 +4,12 @@
     $navigation = [
         ['route' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard'],
         ['route' => 'wallet', 'label' => 'Wallet', 'icon' => 'wallet'],
+        ['route' => 'deposit', 'label' => 'Add Funds', 'icon' => 'circle-plus'],
         ['route' => 'withdraw', 'label' => 'Withdraw', 'icon' => 'withdraw'],
         ['route' => 'plans', 'label' => 'Plans', 'icon' => 'trophy'],
         ['route' => 'tips', 'label' => 'Tips', 'icon' => 'lightbulb'],
         ['route' => 'bookings', 'label' => 'Bookings', 'icon' => 'calendar'],
+        ['route' => 'settings', 'label' => 'Settings', 'icon' => 'user'],
     ];
 
     $user = auth()->user();
@@ -132,13 +134,13 @@
             </nav>
 
             <div class="border-t border-slate-200 p-4 dark:border-white/10">
-                <div class="flex items-center gap-3 rounded-xl bg-slate-50 p-3 dark:bg-white/5">
+                <a href="{{ route('settings') }}" class="flex items-center gap-3 rounded-xl bg-slate-50 p-3 transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:hover:bg-white/10">
                     <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-blue-500 to-indigo-600 text-sm font-semibold text-white">{{ $user->initials() }}</span>
                     <div class="min-w-0">
                         <p class="truncate text-sm font-semibold text-slate-900 dark:text-white">{{ $user->name }}</p>
                         <p class="truncate text-xs text-slate-500 dark:text-slate-400">{{ $user->email }}</p>
                     </div>
-                </div>
+                </a>
             </div>
         </aside>
 

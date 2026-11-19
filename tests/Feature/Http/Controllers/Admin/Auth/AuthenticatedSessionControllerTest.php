@@ -19,6 +19,23 @@ class AuthenticatedSessionControllerTest extends TestCase
         $response->assertSee('Admin sign in');
     }
 
+    public function test_login_page_explains_how_to_create_the_first_admin_when_there_is_none(): void
+    {
+        $response = $this->get(route('admin.login'));
+
+        $response->assertSee('No admin accounts exist yet.');
+        $response->assertSee('php artisan admin:create');
+    }
+
+    public function test_login_page_hides_the_setup_hint_once_an_admin_exists(): void
+    {
+        Admin::factory()->create();
+
+        $response = $this->get(route('admin.login'));
+
+        $response->assertDontSee('No admin accounts exist yet.');
+    }
+
     public function test_valid_admin_credentials_sign_in_and_redirect_to_admin_dashboard(): void
     {
         $admin = Admin::factory()->create();

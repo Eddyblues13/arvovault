@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['type', 'status', 'amount_in_cents', 'method', 'destination', 'description'])]
+#[Fillable(['type', 'status', 'amount_in_cents', 'method', 'destination', 'reference', 'description'])]
 class Transaction extends Model
 {
     /** @use HasFactory<TransactionFactory> */
@@ -132,6 +132,10 @@ class Transaction extends Model
 
         if ($this->type === TransactionType::Withdrawal && $this->method) {
             return "Withdrawal to {$this->method}";
+        }
+
+        if ($this->type === TransactionType::Credit && $this->method) {
+            return "Deposit via {$this->method}";
         }
 
         return $this->type->label();

@@ -35,6 +35,9 @@
             @if ($transaction->destination)
                 <p class="mt-0.5 truncate text-xs text-slate-500 dark:text-slate-400">Send to <span class="font-medium text-slate-700 select-all dark:text-slate-200">{{ $transaction->destination }}</span></p>
             @endif
+            @if ($transaction->reference)
+                <p class="mt-0.5 truncate text-xs text-slate-500 dark:text-slate-400">Payment reference <span class="font-medium text-slate-700 select-all dark:text-slate-200">{{ $transaction->reference }}</span></p>
+            @endif
         </div>
 
         <div class="flex flex-col items-end gap-1">

@@ -2,6 +2,13 @@
     <h1 class="text-xl font-bold tracking-tight sm:text-2xl">Admin sign in</h1>
     <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">Sign in with your admin account to manage users and funds.</p>
 
+    @if ($hasNoAdmins)
+        <div class="mt-6 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:bg-amber-400/10 dark:text-amber-100">
+            <p class="font-semibold">No admin accounts exist yet.</p>
+            <p class="mt-1">Create the first one by running <code class="rounded bg-amber-100 px-1 py-0.5 font-mono text-xs dark:bg-amber-400/20">php artisan admin:create</code> on the server.</p>
+        </div>
+    @endif
+
     <form method="POST" action="{{ route('admin.login.store') }}" class="mt-8 space-y-5">
         @csrf
 

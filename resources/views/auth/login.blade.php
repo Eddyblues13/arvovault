@@ -9,10 +9,13 @@
 
         <x-input-field label="Password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required />
 
-        <label class="flex w-fit cursor-pointer items-center gap-2.5 text-sm text-slate-600 dark:text-slate-400">
-            <input type="checkbox" name="remember" value="1" @checked(old('remember')) class="size-4 rounded border-slate-300 accent-blue-600">
-            Remember me
-        </label>
+        <div class="flex items-center justify-between gap-4">
+            <label class="flex w-fit cursor-pointer items-center gap-2.5 text-sm text-slate-600 dark:text-slate-400">
+                <input type="checkbox" name="remember" value="1" @checked(old('remember')) class="size-4 rounded border-slate-300 accent-blue-600">
+                Remember me
+            </label>
+            <a href="{{ route('password.request') }}" class="text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">Forgot password?</a>
+        </div>
 
         <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
             Sign In

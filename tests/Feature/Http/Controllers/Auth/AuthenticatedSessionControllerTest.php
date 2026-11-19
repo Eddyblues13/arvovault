@@ -58,6 +58,19 @@ class AuthenticatedSessionControllerTest extends TestCase
         $this->assertGuest();
     }
 
+    public function test_suspended_user_cannot_sign_in_even_with_the_correct_password(): void
+    {
+        $user = User::factory()->suspended()->create();
+
+        $response = $this->post(route('login'), [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $response->assertSessionHasErrors(['email' => 'Your account has been suspended. Contact support if you think this is a mistake.']);
+        $this->assertGuest();
+    }
+
     public function test_login_is_locked_after_five_failed_attempts_even_with_the_correct_password(): void
     {
         $user = User::factory()->create();

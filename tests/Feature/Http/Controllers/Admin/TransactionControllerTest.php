@@ -107,4 +107,15 @@ class TransactionControllerTest extends TestCase
         $response->assertSee('Withdrawal to Cash App');
         $response->assertSee('$janedoe');
     }
+
+    public function test_deposits_show_the_payment_reference_to_match_against(): void
+    {
+        $deposit = Transaction::factory()->pending()->create(['method' => 'Zelle', 'reference' => 'ZL-2026-1120']);
+
+        $response = $this->actingAs(Admin::factory()->create(), 'admin')->get(route('admin.transactions.index'));
+
+        $response->assertSee('Deposit via Zelle');
+        $response->assertSee('ZL-2026-1120');
+        $response->assertSee(route('admin.transactions.status.update', $deposit));
+    }
 }

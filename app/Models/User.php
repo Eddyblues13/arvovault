@@ -33,7 +33,16 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'suspended_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Determine whether an admin has suspended the account.
+     */
+    public function isSuspended(): bool
+    {
+        return $this->suspended_at !== null;
     }
 
     /**

@@ -25,6 +25,8 @@
 
                 <main class="flex flex-1 items-center justify-center py-12">
                     <div class="w-full max-w-sm transition duration-500 ease-out starting:translate-y-3 starting:opacity-0 motion-reduce:transition-none">
+                        <x-flash-messages />
+
                         {{ $slot }}
                     </div>
                 </main>
